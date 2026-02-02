@@ -96,7 +96,13 @@ export default function Home() {
             href="/compound"
             className="flex-1 md:flex-none px-4 md:px-6 py-2 rounded-lg font-medium text-sm md:text-base transition-colors bg-gradient-to-r from-green-600 to-emerald-600 text-white hover:from-green-500 hover:to-emerald-500 text-center"
           >
-            🎯 Goal Tracker
+            🎯 Goal
+          </Link>
+          <Link
+            href="/trades"
+            className="flex-1 md:flex-none px-4 md:px-6 py-2 rounded-lg font-medium text-sm md:text-base transition-colors bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:from-purple-500 hover:to-pink-500 text-center"
+          >
+            📊 History
           </Link>
         </div>
 

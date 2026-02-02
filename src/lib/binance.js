@@ -590,3 +590,63 @@ export async function closePosition(symbol, side, quantity) {
     throw error;
   }
 }
+
+// Get futures trade history (realized PnL)
+export async function getFuturesTradeHistory(limit = 10) {
+  try {
+    // Get recent income history which includes realized PnL
+    const income = await futuresAuthenticatedRequest('/fapi/v1/income', { 
+      incomeType: 'REALIZED_PNL',
+      limit: limit 
+    });
+    
+    return income.map(item => ({
+      id: item.tranId?.toString() || `${item.time}`,
+      symbol: item.symbol,
+      incomeType: item.incomeType,
+      income: parseFloat(item.income),
+      asset: item.asset,
+      timestamp: item.time,
+      datetime: new Date(item.time).toISOString(),
+    })).sort((a, b) => b.timestamp - a.timestamp);
+  } catch (error) {
+    console.error('Error fetching futures trade history:', error.message);
+    throw error;
+  }
+}
+
+// Get closed/filled futures orders
+export async function getFuturesClosedOrders(symbol = null, limit = 10) {
+  try {
+    const params = { limit: 100 }; // Fetch more to filter
+    if (symbol) params.symbol = symbol;
+    
+    const orders = await futuresAuthenticatedRequest('/fapi/v1/allOrders', params);
+    
+    // Filter only filled/closed orders and limit results
+    const closedOrders = orders
+      .filter(order => order.status === 'FILLED' || order.status === 'CANCELED')
+      .sort((a, b) => b.updateTime - a.updateTime)
+      .slice(0, limit)
+      .map(order => ({
+        id: order.orderId.toString(),
+        symbol: order.symbol,
+        side: order.side.toLowerCase(),
+        positionSide: order.positionSide,
+        type: order.type.toLowerCase().replace('_', ' '),
+        status: order.status.toLowerCase(),
+        price: parseFloat(order.avgPrice) || parseFloat(order.price),
+        quantity: parseFloat(order.origQty),
+        executedQty: parseFloat(order.executedQty),
+        reduceOnly: order.reduceOnly,
+        closePosition: order.closePosition,
+        timestamp: order.updateTime,
+        datetime: new Date(order.updateTime).toISOString(),
+      }));
+    
+    return closedOrders;
+  } catch (error) {
+    console.error('Error fetching closed orders:', error.message);
+    throw error;
+  }
+}
