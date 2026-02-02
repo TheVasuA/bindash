@@ -5,7 +5,7 @@ export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url);
     const limit = parseInt(searchParams.get('limit') || '10');
-    const type = searchParams.get('type') || 'orders'; // 'orders' or 'pnl'
+    const type = searchParams.get('type') || 'orders'; // 'orders', 'pnl', or 'losses'
 
     if (!process.env.BINANCE_API_KEY || !process.env.BINANCE_API_SECRET) {
       return NextResponse.json({
@@ -14,7 +14,7 @@ export async function GET(request) {
     }
 
     let data;
-    if (type === 'pnl') {
+    if (type === 'pnl' || type === 'losses') {
       data = await getFuturesTradeHistory(limit);
     } else {
       data = await getFuturesClosedOrders(null, limit);
