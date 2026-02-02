@@ -48,8 +48,8 @@ export default function FuturesPage() {
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-4">
             <div>
               <p className="text-gray-500 text-xs uppercase tracking-wider mb-1">Current Balance</p>
-              <p className="text-3xl md:text-5xl font-bold bg-gradient-to-r from-white via-white to-gray-400 bg-clip-text text-transparent">
-                {formatCurrency(currentBalance)}
+              <p className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-white via-white to-gray-400 bg-clip-text text-transparent">
+                {formatCurrency(currentBalance, 2)}
               </p>
               {futuresAccount?.totalUnrealizedProfit !== undefined && (
                 <div className={`inline-flex items-center gap-1 mt-1 px-2 py-0.5 rounded-full text-xs font-medium ${

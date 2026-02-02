@@ -60,16 +60,14 @@ export function useFetch(url, options = {}) {
 }
 
 export function formatCurrency(value, decimals = 2) {
-  if (value === undefined || value === null) return '$0.0000';
-  const absVal = Math.abs(Number(value));
-  let d = 4;
-  if (absVal > 0 && absVal < 0.0001) d = 6;
+  if (value === undefined || value === null) return '$0.00';
+  const num = Number(value);
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
-    minimumFractionDigits: d,
-    maximumFractionDigits: d,
-  }).format(value);
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals,
+  }).format(num);
 }
 
 export function formatNumber(value, decimals = 2) {
