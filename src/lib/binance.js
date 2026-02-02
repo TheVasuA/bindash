@@ -392,17 +392,22 @@ export async function getFuturesPositions() {
       futuresAuthenticatedRequest('/fapi/v1/openOrders')
     ]);
     
-    // Group stop loss orders by symbol
+    // Group stop loss and take profit orders by symbol
     const stopLossOrders = {};
+    const takeProfitOrders = {};
     openOrders.forEach(order => {
+      // Stop Loss
       if (order.type === 'STOP_MARKET' || order.type === 'STOP') {
-        if (!stopLossOrders[order.symbol]) {
-          stopLossOrders[order.symbol] = [];
-        }
+        if (!stopLossOrders[order.symbol]) stopLossOrders[order.symbol] = [];
         stopLossOrders[order.symbol].push(order);
       }
+      // Take Profit
+      if (order.type === 'TAKE_PROFIT_MARKET' || order.type === 'TAKE_PROFIT') {
+        if (!takeProfitOrders[order.symbol]) takeProfitOrders[order.symbol] = [];
+        takeProfitOrders[order.symbol].push(order);
+      }
     });
-    
+
     return positions
       .filter(p => parseFloat(p.positionAmt) !== 0)
       .map(p => {
@@ -410,7 +415,7 @@ export async function getFuturesPositions() {
         const entryPrice = parseFloat(p.entryPrice);
         const side = positionAmt > 0 ? 'LONG' : 'SHORT';
         const absAmt = Math.abs(positionAmt);
-        
+
         // Find stop loss for this position
         const symbolStopOrders = stopLossOrders[p.symbol] || [];
         const stopLoss = symbolStopOrders.find(order => {
@@ -419,10 +424,9 @@ export async function getFuturesPositions() {
           if (side === 'SHORT' && order.side === 'BUY') return true;
           return false;
         });
-        
+
         const stopPrice = stopLoss ? parseFloat(stopLoss.stopPrice) : null;
         let stopLossValue = null;
-        
         if (stopPrice) {
           // Calculate loss if stop loss triggers
           if (side === 'LONG') {
@@ -431,7 +435,27 @@ export async function getFuturesPositions() {
             stopLossValue = (entryPrice - stopPrice) * absAmt;
           }
         }
-        
+
+        // Find take profit for this position
+        const symbolTpOrders = takeProfitOrders[p.symbol] || [];
+        const takeProfit = symbolTpOrders.find(order => {
+          // For LONG, TP is SELL; for SHORT, TP is BUY
+          if (side === 'LONG' && order.side === 'SELL') return true;
+          if (side === 'SHORT' && order.side === 'BUY') return true;
+          return false;
+        });
+
+        const tpPrice = takeProfit ? parseFloat(takeProfit.stopPrice || takeProfit.price) : null;
+        let takeProfitValue = null;
+        if (tpPrice) {
+          // Calculate profit if take profit triggers
+          if (side === 'LONG') {
+            takeProfitValue = (tpPrice - entryPrice) * absAmt;
+          } else {
+            takeProfitValue = (entryPrice - tpPrice) * absAmt;
+          }
+        }
+
         return {
           symbol: p.symbol,
           side,
@@ -447,6 +471,8 @@ export async function getFuturesPositions() {
           roe: parseFloat(p.unRealizedProfit) / (parseFloat(p.isolatedMargin) || parseFloat(p.notional) / parseInt(p.leverage)) * 100,
           stopLossPrice: stopPrice,
           stopLossValue,
+          takeProfitPrice: tpPrice,
+          takeProfitValue,
         };
       });
   } catch (error) {

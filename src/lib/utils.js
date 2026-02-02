@@ -2,11 +2,13 @@
 'use client';
 // Format currency with full precision (up to 8 decimals, no rounding)
 export function formatCurrencyFull(value) {
-  if (value === undefined || value === null) return '$0.00';
-  // Show up to 8 decimals, but trim trailing zeros
+  if (value === undefined || value === null) return '$0.0000';
+  const absVal = Math.abs(Number(value));
+  let decimals = 4;
+  if (absVal > 0 && absVal < 0.0001) decimals = 6;
   return '$' + Number(value).toLocaleString('en-US', {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 8,
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals,
   }).replace(/\.0+$/, '');
 }
 
@@ -58,40 +60,49 @@ export function useFetch(url, options = {}) {
 }
 
 export function formatCurrency(value, decimals = 2) {
-  if (value === undefined || value === null) return '$0.00';
+  if (value === undefined || value === null) return '$0.0000';
+  const absVal = Math.abs(Number(value));
+  let d = 4;
+  if (absVal > 0 && absVal < 0.0001) d = 6;
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
-    minimumFractionDigits: decimals,
-    maximumFractionDigits: decimals,
+    minimumFractionDigits: d,
+    maximumFractionDigits: d,
   }).format(value);
 }
 
 export function formatNumber(value, decimals = 2) {
-  if (value === undefined || value === null) return '0';
+  if (value === undefined || value === null) return '0.0000';
+  const absVal = Math.abs(Number(value));
+  let d = 4;
+  if (absVal > 0 && absVal < 0.0001) d = 6;
   return new Intl.NumberFormat('en-US', {
-    minimumFractionDigits: decimals,
-    maximumFractionDigits: decimals,
+    minimumFractionDigits: d,
+    maximumFractionDigits: d,
   }).format(value);
 }
 
 export function formatPercent(value, decimals = 2) {
-  if (value === undefined || value === null) return '0%';
+  if (value === undefined || value === null) return '0.0000%';
   const sign = value >= 0 ? '+' : '';
-  return `${sign}${value.toFixed(decimals)}%`;
+  const absVal = Math.abs(Number(value));
+  let d = 4;
+  if (absVal > 0 && absVal < 0.0001) d = 6;
+  return sign + formatNumber(value, d) + '%';
 }
 
 export function getChangeColor(value) {
-  if (value > 0) return 'text-green-500';
-  if (value < 0) return 'text-red-500';
+  if (value > 0) return 'text-green-400';
+  if (value < 0) return 'text-red-400';
   return 'text-gray-500';
 }
 
 export function getRiskColor(riskLevel) {
   switch (riskLevel) {
-    case 'Conservative': return 'text-green-500 bg-green-500/10';
-    case 'Moderate': return 'text-yellow-500 bg-yellow-500/10';
-    case 'Aggressive': return 'text-red-500 bg-red-500/10';
+    case 'Conservative': return 'text-green-400 bg-green-400/10';
+    case 'Moderate': return 'text-yellow-400 bg-yellow-400/10';
+    case 'Aggressive': return 'text-red-400 bg-red-400/10';
     default: return 'text-gray-500 bg-gray-500/10';
   }
 }

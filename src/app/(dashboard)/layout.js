@@ -45,6 +45,7 @@ export default function DashboardLayout({ children }) {
           completedTrades,
           totalTrades,
           tradesProgress: displayProgress,
+          tradesRemaining: totalTrades - completedTrades,
           // Add current milestone info for Navbar
           ...(function getCurrentMilestone() {
             // Reproduce milestone logic

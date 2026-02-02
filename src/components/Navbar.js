@@ -93,7 +93,7 @@ export default function Navbar({ onRefresh, loading, progressData }) {
 
           {/* Progress Bar - Compact in header */}
           {progressData && (
-            <div className="hidden md:flex items-center gap-2 flex-1 max-w-xl mx-4 px-2 py-1 bg-gray-900/50 rounded-full border border-gray-700/50 min-h-[40px]">
+            <div className="hidden md:flex items-center gap-2 flex-1 mx-4 px-2 py-1 bg-gray-900/50 rounded-full border border-gray-700/50 min-h-[40px] whitespace-nowrap overflow-x-auto min-w-0">
               <span className="text-[11px] text-white font-bold tabular-nums">{(progressData?.tradesProgress || 0).toFixed(1)}%</span>
               <div className="flex-1 bg-gray-700/80 rounded-full h-2 overflow-hidden shadow-inner relative">
                 <div
@@ -106,16 +106,23 @@ export default function Navbar({ onRefresh, loading, progressData }) {
               </div>
               {/* Current Trade Summary */}
               {currentTradeNum && (
-                <div className="flex flex-col md:flex-row items-end md:items-center justify-center gap-1 md:gap-3 min-w-[120px] px-2 border-l border-gray-700/40">
+                <div className="flex flex-col md:flex-row items-end md:items-center justify-center gap-1 md:gap-3 min-w-[120px] px-2 border-l border-gray-700/40 flex-shrink-0">
                   <span className="text-[13px] text-blue-400 font-semibold leading-tight md:mr-3">Trade #{currentTradeNum}</span>
                   <span className="text-[12px] text-gray-300 leading-tight md:mr-3">Start: <span className="text-white">${currentTradeStart?.toLocaleString(undefined, {maximumFractionDigits:2})}</span></span>
                   <span className="text-[12px] text-green-400 leading-tight md:mr-3">Target: <span className="font-bold">+${currentTradeProfit?.toLocaleString(undefined, {maximumFractionDigits:2})}</span></span>
                   <span className="text-[12px] text-blue-400 leading-tight">End: <span className="font-bold">${currentTradeEnd?.toLocaleString(undefined, {maximumFractionDigits:2})}</span></span>
                 </div>
               )}
+              {/* Trades Remaining (RmT) */}
+              {typeof progressData?.tradesRemaining === 'number' && (
+                <div className="flex items-center gap-1 px-2 border-l border-gray-700/40 flex-shrink-0">
+                  <span className="text-[12px] text-yellow-300 font-bold">RmT</span>
+                  <span className="text-[12px] text-white font-bold">{progressData.tradesRemaining}</span>
+                </div>
+              )}
               <div className="flex items-center gap-1.5">
-                <span className="text-[11px] text-gray-300 font-medium">$100K</span>
-                <span className="text-[10px] text-green-400 font-semibold">🎯</span>
+                <span className="text-[11px] md:text-[12px] text-gray-300 font-medium">$100K</span>
+                <span className="text-[10px] md:text-[12px] text-green-400 font-semibold">🎯</span>
               </div>
             </div>
           )}

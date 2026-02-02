@@ -46,11 +46,18 @@ export default function FuturesPositions({ positions, onRefresh }) {
     );
   }
 
+  // Sort positions by total USDT size (desc)
+  const sortedPositions = [...positions].sort((a, b) => {
+    const aSize = Math.abs(a.positionAmt * a.entryPrice);
+    const bSize = Math.abs(b.positionAmt * b.entryPrice);
+    return bSize - aSize;
+  });
+
   return (
     <>
       {/* Mobile Card View */}
       <div className="block md:hidden space-y-4">
-        {positions.map((position, index) => (
+        {sortedPositions.map((position, index) => (
           <div 
             key={`mobile-${position.symbol}-${index}`}
             className="bg-gray-800 rounded-lg p-4 border border-gray-700"
@@ -103,9 +110,20 @@ export default function FuturesPositions({ positions, onRefresh }) {
                 <p className="text-white">
                   {formatCurrencyFull(position.entryPrice)}
                   <span className="text-xs text-blue-400 ml-2">(
-                    {formatCurrencyFull(Math.abs(position.positionAmt * position.entryPrice))}
+                    ${Math.round(Math.abs(position.positionAmt * position.entryPrice)).toLocaleString('en-US')}
                   )</span>
                 </p>
+              </div>
+              <div>
+                <span className="text-gray-400">Target</span>
+                {position.takeProfitPrice ? (
+                  <p className="text-green-400">
+                    {formatCurrencyFull(position.takeProfitPrice)}
+                    <span className="text-green-400 text-xs ml-1">({formatCurrencyFull(position.takeProfitValue)})</span>
+                  </p>
+                ) : (
+                  <p className="text-gray-500">No Target</p>
+                )}
               </div>
               <div>
                 <span className="text-gray-400">Mark</span>
@@ -114,7 +132,7 @@ export default function FuturesPositions({ positions, onRefresh }) {
               <div>
                 <span className="text-gray-400">PnL</span>
                 <p className={`font-medium ${getChangeColor(position.unrealizedProfit)}`}>
-                  {formatCurrencyFull(position.unrealizedProfit)} ({formatPercent(position.roe)})
+                  {formatCurrency(Number(position.unrealizedProfit).toFixed(2), 2)} ({formatPercent(Number(position.roe).toFixed(2), 2)})
                 </p>
               </div>
               <div>
@@ -142,60 +160,56 @@ export default function FuturesPositions({ positions, onRefresh }) {
         <table className="w-full">
           <thead>
             <tr className="border-b border-gray-700">
-              <th className="text-left py-3 px-4 text-gray-400 font-medium text-sm">Symbol</th>
-              
-              <th className="text-right py-3 px-4 text-gray-400 font-medium text-sm">Total USDT</th>
               <th className="text-right py-3 px-4 text-gray-400 font-medium text-sm">Entry Price</th>
               <th className="text-right py-3 px-4 text-gray-400 font-medium text-sm">Mark Price</th>
-              <th className="text-right py-3 px-4 text-gray-400 font-medium text-sm">PnL (ROE%)</th>
+              <th className="text-right py-3 px-4 text-gray-400 font-medium text-sm">Target</th>
               <th className="text-right py-3 px-4 text-gray-400 font-medium text-sm">Stop Loss</th>
               <th className="text-right py-3 px-4 text-gray-400 font-medium text-sm">Liq. Price</th>
               <th className="text-center py-3 px-4 text-gray-400 font-medium text-sm">Leverage</th>
+              <th className="border-l border-gray-700 text-left py-3 px-4 text-gray-400 font-medium text-sm">Symbol</th>
+              <th className=" text-right py-3 px-4 text-gray-400 font-medium text-sm">PnL</th>
+              <th className=" text-right py-3 px-4 text-gray-400 font-medium text-sm">USDT</th>
               <th className="text-center py-3 px-2 text-gray-400 font-medium text-sm"></th>
             </tr>
           </thead>
           <tbody>
-            {positions.map((position, index) => (
+            {sortedPositions.map((position, index) => (
               <tr 
                 key={`${position.symbol}-${index}`}
                 className="border-b border-gray-800 hover:bg-gray-800/50 transition-colors"
               >
-                <td className="py-4 px-4">
-                  <div className="flex items-center gap-2">
-                    <div className={`w-2 h-2 rounded-full ${position.side === 'LONG' ? 'bg-green-500' : 'bg-red-500'}`} />
-                    <span className="font-medium text-white">{position.symbol}</span>
-                  </div>
-                </td>
-                {/* Side column removed */}
-                <td className="py-4 px-4 text-right text-blue-400 font-medium">
-                  {formatCurrencyFull(Math.abs(position.positionAmt * position.entryPrice))} 
+                <td className="py-4 px-4 text-right text-gray-300">
+                  {formatCurrency(position.entryPrice, 4).replace('$', '')}
                 </td>
                 <td className="py-4 px-4 text-right text-gray-300">
-                  {formatCurrencyFull(position.entryPrice)}
+                  {formatCurrency(position.markPrice, 4).replace('$', '')}
                 </td>
-                <td className="py-4 px-4 text-right text-gray-300">
-                  {formatCurrencyFull(position.markPrice)}
-                </td>
-                <td className={`py-4 px-4 text-right font-medium ${getChangeColor(position.unrealizedProfit)}`}>
-                  <div>{formatCurrency(Math.abs(position.unrealizedProfit), 2)}</div>
-                  <div className="text-xs opacity-80">
-                    {formatPercent(position.roe, 2)}
-                  </div>
+                <td className="py-4 px-4 text-right">
+                  {position.takeProfitPrice ? (
+                    <div>
+                      <div className="text-gray-300">{formatCurrency(position.takeProfitPrice, 4).replace('$', '')}</div>
+                      <div className="text-sm text-green-500">
+                        {formatCurrency(position.takeProfitValue, 4).replace('$', '')}
+                      </div>
+                    </div>
+                  ) : (
+                    <span className="text-gray-500 text-sm">No Target</span>
+                  )}
                 </td>
                 <td className="py-4 px-4 text-right">
                   {position.stopLossPrice ? (
                     <div>
-                      <div className="text-yellow-400">{formatCurrencyFull(position.stopLossPrice)}</div>
-                      <div className="text-xs text-red-400">
-                        {formatCurrencyFull(position.stopLossValue)}
+                      <div className="text-gray-300">{formatCurrency(position.stopLossPrice, 4).replace('$', '')}</div>
+                      <div className="text-sm text-red-500">
+                        {formatCurrency(position.stopLossValue, 4).replace('$', '')}
                       </div>
                     </div>
                   ) : (
                     <span className="text-gray-500 text-sm">No SL</span>
                   )}
                 </td>
-                <td className="py-4 px-4 text-right text-orange-400">
-                  {formatCurrencyFull(position.liquidationPrice)}
+                <td className="py-4 px-4 text-right text-blue-400">
+                  {formatCurrency(position.liquidationPrice, 4).replace('$', '')}
                 </td>
                 <td className="py-4 px-4 text-center">
                   <span className={`px-2 py-1 rounded text-xs font-semibold ${
@@ -205,6 +219,21 @@ export default function FuturesPositions({ positions, onRefresh }) {
                   }`}>
                     {position.leverage}x
                   </span>
+                </td>
+                <td className="border-l border-gray-700 py-4 px-4">
+                  <div className="flex items-center gap-2">
+                    <div className={`w-2 h-2 rounded-full ${position.side === 'LONG' ? 'bg-green-500' : 'bg-red-500'}`} />
+                    <span className="font-medium text-white">{position.symbol}</span>
+                  </div>
+                </td>
+                <td className={`border-l border-gray-700 py-4 px-4 text-right font-medium ${getChangeColor(position.unrealizedProfit)}`}> 
+                  <div>{Number(Math.abs(position.unrealizedProfit)).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                  <div className="text-sm opacity-80">
+                    {Number(position.roe).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%
+                  </div>
+                </td>
+                <td className="border-l border-gray-700 py-4 px-4 text-right text-gray-200 font-medium">
+                  {Math.round(Math.abs(position.positionAmt * position.entryPrice))}
                 </td>
                 <td className="py-4 px-2 text-center">
                   <button
