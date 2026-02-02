@@ -7,6 +7,7 @@ export function useFetch(url, options = {}) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [apiWeight, setApiWeight] = useState(null);
 
   const fetchData = useCallback(async (isBackground = false) => {
     try {
@@ -18,6 +19,9 @@ export function useFetch(url, options = {}) {
       
       if (result.success) {
         setData(result.data);
+        if (result.apiWeight !== undefined) {
+          setApiWeight(result.apiWeight);
+        }
       } else if (result.error) {
         setError(result.error);
       }
@@ -40,7 +44,7 @@ export function useFetch(url, options = {}) {
 
   const refetch = () => fetchData();
 
-  return { data, loading, error, refetch };
+  return { data, loading, error, refetch, apiWeight };
 }
 
 export function formatCurrency(value, decimals = 2) {

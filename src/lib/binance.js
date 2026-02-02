@@ -9,6 +9,14 @@ const TESTNET_URL = 'https://testnet.binance.vision';
 const FUTURES_URL = 'https://fapi.binance.com';
 const FUTURES_TESTNET_URL = 'https://testnet.binancefuture.com';
 
+// API Weight tracking
+let currentApiWeight = 0;
+let lastWeightUpdate = Date.now();
+
+export function getApiWeight() {
+  return { weight: currentApiWeight, updatedAt: lastWeightUpdate };
+}
+
 // Get the base URL based on environment
 function getBaseUrl() {
   return process.env.BINANCE_TESTNET === 'true' ? TESTNET_URL : BASE_URL;
@@ -90,9 +98,21 @@ async function authenticatedRequest(endpoint, params = {}) {
         'X-MBX-APIKEY': apiKey,
       },
     });
+    // Track API weight from headers
+    const weight = response.headers['x-mbx-used-weight-1m'];
+    if (weight) {
+      currentApiWeight = parseInt(weight);
+      lastWeightUpdate = Date.now();
+    }
     return response.data;
   } catch (error) {
     if (error.response) {
+      // Track weight even on error
+      const weight = error.response.headers?.['x-mbx-used-weight-1m'];
+      if (weight) {
+        currentApiWeight = parseInt(weight);
+        lastWeightUpdate = Date.now();
+      }
       console.error('Binance API Error:', error.response.data);
       throw new Error(`Binance API: ${error.response.data.msg || error.response.data.code || 'Unknown error'}`);
     }
@@ -122,9 +142,21 @@ async function futuresAuthenticatedRequest(endpoint, params = {}) {
         'X-MBX-APIKEY': apiKey,
       },
     });
+    // Track API weight from headers (Futures uses different header)
+    const weight = response.headers['x-mbx-used-weight-1m'] || response.headers['x-mbx-used-weight'];
+    if (weight) {
+      currentApiWeight = parseInt(weight);
+      lastWeightUpdate = Date.now();
+    }
     return response.data;
   } catch (error) {
     if (error.response) {
+      // Track weight even on error
+      const weight = error.response.headers?.['x-mbx-used-weight-1m'] || error.response.headers?.['x-mbx-used-weight'];
+      if (weight) {
+        currentApiWeight = parseInt(weight);
+        lastWeightUpdate = Date.now();
+      }
       console.error('Binance Futures API Error:', error.response.data);
       throw new Error(`Binance Futures API: ${error.response.data.msg || error.response.data.code || 'Unknown error'}`);
     }

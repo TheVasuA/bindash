@@ -4,7 +4,8 @@ import {
   getFuturesPositions,
   getFuturesOpenOrders,
   calculateFuturesRiskMetrics,
-  closePosition
+  closePosition,
+  getApiWeight
 } from '@/lib/binance';
 
 export async function GET(request) {
@@ -40,9 +41,13 @@ export async function GET(request) {
       };
     }
 
+    // Get current API weight
+    const apiWeight = getApiWeight();
+
     return NextResponse.json({
       success: true,
       data,
+      apiWeight: apiWeight.weight,
       lastUpdated: new Date().toISOString(),
     });
   } catch (error) {

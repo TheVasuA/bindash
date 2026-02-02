@@ -5,7 +5,7 @@ import { useFetch, formatCurrency } from '@/lib/utils';
 import Link from 'next/link';
 
 export default function CompoundPage() {
-  const { data: futuresData, loading: futuresLoading } = useFetch('/api/futures', { refreshInterval: 5000 });
+  const { data: futuresData, loading: futuresLoading, refetch } = useFetch('/api/futures', { refreshInterval: 10000 });
   const [completedTrades, setCompletedTrades] = useState([]);
   const [savedStartingBalance, setSavedStartingBalance] = useState(null);
   const [isDbLoaded, setIsDbLoaded] = useState(false);
@@ -134,14 +134,52 @@ export default function CompoundPage() {
   const currentMilestone = milestones[completedCount] || null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 p-3 md:p-6">
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen bg-gray-900">
+      {/* Navbar */}
+      <nav className="bg-gray-800/80 backdrop-blur-sm border-b border-gray-700 sticky top-0 z-40">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-14">
+            <div className="flex items-center gap-4">
+              <Link href="/" className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                  <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                  </svg>
+                </div>
+                <span className="text-white font-bold hidden sm:block">Bala Dashboard</span>
+              </Link>
+              <div className="flex items-center gap-1">
+                <Link href="/" className="px-3 py-1.5 text-gray-400 hover:text-white text-sm font-medium rounded-lg hover:bg-gray-700/50 transition-colors">
+                  Futures
+                </Link>
+                <Link href="/spot" className="px-3 py-1.5 text-gray-400 hover:text-white text-sm font-medium rounded-lg hover:bg-gray-700/50 transition-colors">
+                  Spot
+                </Link>
+                <span className="px-3 py-1.5 bg-blue-600 text-white text-sm font-medium rounded-lg">
+                  🎯 Goal
+                </span>
+                <Link href="/trades" className="px-3 py-1.5 text-gray-400 hover:text-white text-sm font-medium rounded-lg hover:bg-gray-700/50 transition-colors">
+                  📊 History
+                </Link>
+              </div>
+            </div>
+            <button
+              onClick={refetch}
+              disabled={futuresLoading}
+              className="p-2 bg-white/5 hover:bg-white/10 border border-white/10 disabled:opacity-50 rounded-lg transition-all"
+            >
+              <svg className={`w-4 h-4 text-white ${futuresLoading ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      <div className="max-w-4xl mx-auto px-3 sm:px-6 lg:px-8 py-4 md:py-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div>
-            <Link href="/" className="text-blue-500 hover:text-blue-400 text-sm mb-2 inline-block">
-              ← Back to Dashboard
-            </Link>
             <h1 className="text-2xl md:text-3xl font-bold text-white">
               Compound Trading Goal
             </h1>
