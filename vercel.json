@@ -4,6 +4,7 @@
   "buildCommand": "npm run build",
   "devCommand": "npm run dev",
   "installCommand": "npm install",
+  "regions": ["sin1"],
   "env": {
     "BINANCE_API_KEY": "32rnQzXXcljs6lF2vfoB9dIe7BBLJrxExupUkBNtYCSvYK4X12TmcKGy4MM7g2ha",
     "BINANCE_API_SECRET": "0SBA16JN4kwiRPqszLP7z5iaNyKTPXDVpn5LJ5ISeOLrGg6x6pZOEVdcjMIuqYdf",
