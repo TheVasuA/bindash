@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "framework": "nextjs",
+  "buildCommand": "npm run build",
+  "devCommand": "npm run dev",
+  "installCommand": "npm install",
+  "env": {
+    "BINANCE_API_KEY": "@binance-api-key",
+    "BINANCE_API_SECRET": "@binance-api-secret",
+    "BINANCE_TESTNET": "@binance-testnet"
+  }
+}
