@@ -44,7 +44,29 @@ export default function DashboardLayout({ children }) {
           targetAmount,
           completedTrades,
           totalTrades,
-          tradesProgress: displayProgress
+          tradesProgress: displayProgress,
+          // Add current milestone info for Navbar
+          ...(function getCurrentMilestone() {
+            // Reproduce milestone logic
+            let milestones = [];
+            let bal = startingBalance > 0 ? startingBalance : 1000;
+            let tradeNum = 1;
+            while (bal < targetAmount && tradeNum <= 500) {
+              const profit = bal * 0.02;
+              const end = bal + profit;
+              milestones.push({ trade: tradeNum, start: bal, profit, end });
+              bal = end;
+              tradeNum++;
+            }
+            const current = milestones[completedTrades] || null;
+            if (!current) return {};
+            return {
+              currentTradeNum: current.trade,
+              currentTradeStart: current.start,
+              currentTradeProfit: current.profit,
+              currentTradeEnd: current.end
+            };
+          })()
         });
       } catch (error) {
         console.error('Failed to load progress data:', error);

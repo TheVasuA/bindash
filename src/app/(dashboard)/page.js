@@ -5,6 +5,8 @@ import { useFetch, formatCurrency } from '@/lib/utils';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import FuturesPositions from '@/components/FuturesPositions';
 import FuturesRiskMetrics from '@/components/FuturesRiskMetrics';
+import MarketSentiment from '@/components/MarketSentiment';
+import PositionCharts from '@/components/PositionCharts';
 
 export default function FuturesPage() {
   const [displayError, setDisplayError] = useState(null);
@@ -135,6 +137,14 @@ export default function FuturesPage() {
           <FuturesPositions positions={futuresPositions} onRefresh={refetchFutures} />
         )}
       </section>
+
+      {/* Position Charts */}
+      {futuresPositions && futuresPositions.length > 0 && (
+        <PositionCharts positions={futuresPositions} />
+      )}
+
+      {/* Market Sentiment */}
+      <MarketSentiment symbol="BTCUSDT" />
 
       {/* Error Card */}
       {displayError && (

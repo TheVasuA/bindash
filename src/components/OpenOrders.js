@@ -46,7 +46,7 @@ export default function OpenOrders({ orders }) {
               </div>
               <div className="text-right">
                 <span className="text-gray-400">Total:</span>
-                <span className="text-white font-medium ml-1">{formatCurrency(order.price * order.amount)}</span>
+                <span className="text-white font-medium ml-1">{formatCurrency(Math.abs(Math.round(order.price * order.amount)), 0)}</span>
               </div>
             </div>
           </div>
@@ -84,7 +84,7 @@ export default function OpenOrders({ orders }) {
                 </td>
                 <td className="py-3 px-4 text-right text-gray-300">{order.amount}</td>
                 <td className="py-3 px-4 text-right text-white font-medium">
-                  {formatCurrency(order.price * order.amount)}
+                  {formatCurrency(Math.abs(Math.round(order.price * order.amount)), 0)}
                 </td>
               </tr>
             ))}

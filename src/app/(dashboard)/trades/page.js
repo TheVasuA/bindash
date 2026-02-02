@@ -19,9 +19,11 @@ export default function TradesPage() {
     });
   };
 
-  // Filter last 30 days
-  const oneMonthAgo = Date.now() - (30 * 24 * 60 * 60 * 1000);
-  const recentTrades = trades?.filter(t => t.timestamp >= oneMonthAgo) || [];
+  // Filter trades from 1st to end of current month
+  const now = new Date();
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0, 0).getTime();
+  const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999).getTime();
+  const recentTrades = trades?.filter(t => t.timestamp >= startOfMonth && t.timestamp <= endOfMonth) || [];
 
   // Group losses by symbol (cumulative)
   const lossesBySymbol = recentTrades
@@ -86,7 +88,7 @@ export default function TradesPage() {
         <h1 className="text-2xl md:text-3xl font-bold text-white">
           Monthly PnL by Coin
         </h1>
-        <p className="text-gray-400 mt-1">Last 30 days - Cumulative per symbol</p>
+        <p className="text-gray-400 mt-1">Current month - Cumulative per symbol</p>
       </div>
 
       {/* Stats Cards */}
@@ -168,7 +170,7 @@ export default function TradesPage() {
         <div className="bg-gray-800/50 rounded-xl border border-gray-700 overflow-hidden">
           <div className="p-4 border-b border-gray-700">
             <h2 className="text-lg font-semibold text-white">
-              {activeTab === 'losses' ? '📉 Losses' : '📈 Profits'} by Coin (Last 30 Days)
+              {activeTab === 'losses' ? '📉 Losses' : '📈 Profits'} by Coin (This Month)
             </h2>
           </div>
 
@@ -240,7 +242,7 @@ export default function TradesPage() {
       {/* Footer */}
       <div className="mt-6 text-center text-gray-500 text-sm">
         <p>
-          Showing cumulative {activeTab} per coin for last 30 days
+          Showing cumulative {activeTab} per coin for current month
         </p>
       </div>
     </div>

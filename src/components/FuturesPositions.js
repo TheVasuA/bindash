@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { formatCurrency, formatPercent, getChangeColor } from '@/lib/utils';
+import { formatCurrency, formatCurrencyFull, formatPercent, getChangeColor } from '@/lib/utils';
 
 export default function FuturesPositions({ positions, onRefresh }) {
   const [closing, setClosing] = useState(null);
@@ -100,24 +100,29 @@ export default function FuturesPositions({ positions, onRefresh }) {
               </div>
               <div>
                 <span className="text-gray-400">Entry</span>
-                <p className="text-white">{formatCurrency(position.entryPrice)}</p>
+                <p className="text-white">
+                  {formatCurrencyFull(position.entryPrice)}
+                  <span className="text-xs text-blue-400 ml-2">(
+                    {formatCurrencyFull(Math.abs(position.positionAmt * position.entryPrice))}
+                  )</span>
+                </p>
               </div>
               <div>
                 <span className="text-gray-400">Mark</span>
-                <p className="text-white">{formatCurrency(position.markPrice)}</p>
+                <p className="text-white">{formatCurrencyFull(position.markPrice)}</p>
               </div>
               <div>
                 <span className="text-gray-400">PnL</span>
                 <p className={`font-medium ${getChangeColor(position.unrealizedProfit)}`}>
-                  {formatCurrency(position.unrealizedProfit)} ({formatPercent(position.roe)})
+                  {formatCurrencyFull(position.unrealizedProfit)} ({formatPercent(position.roe)})
                 </p>
               </div>
               <div>
                 <span className="text-gray-400">Stop Loss</span>
                 {position.stopLossPrice ? (
                   <p className="text-yellow-400">
-                    {formatCurrency(position.stopLossPrice)}
-                    <span className="text-red-400 text-xs ml-1">({formatCurrency(position.stopLossValue)})</span>
+                    {formatCurrencyFull(position.stopLossPrice)}
+                    <span className="text-red-400 text-xs ml-1">({formatCurrencyFull(position.stopLossValue)})</span>
                   </p>
                 ) : (
                   <p className="text-gray-500">No SL</p>
@@ -125,7 +130,7 @@ export default function FuturesPositions({ positions, onRefresh }) {
               </div>
               <div>
                 <span className="text-gray-400">Liq. Price</span>
-                <p className="text-orange-400">{formatCurrency(position.liquidationPrice)}</p>
+                <p className="text-orange-400">{formatCurrencyFull(position.liquidationPrice)}</p>
               </div>
             </div>
           </div>
@@ -138,8 +143,8 @@ export default function FuturesPositions({ positions, onRefresh }) {
           <thead>
             <tr className="border-b border-gray-700">
               <th className="text-left py-3 px-4 text-gray-400 font-medium text-sm">Symbol</th>
-              <th className="text-left py-3 px-4 text-gray-400 font-medium text-sm">Side</th>
-              <th className="text-right py-3 px-4 text-gray-400 font-medium text-sm">Size</th>
+              
+              <th className="text-right py-3 px-4 text-gray-400 font-medium text-sm">Total USDT</th>
               <th className="text-right py-3 px-4 text-gray-400 font-medium text-sm">Entry Price</th>
               <th className="text-right py-3 px-4 text-gray-400 font-medium text-sm">Mark Price</th>
               <th className="text-right py-3 px-4 text-gray-400 font-medium text-sm">PnL (ROE%)</th>
@@ -161,36 +166,28 @@ export default function FuturesPositions({ positions, onRefresh }) {
                     <span className="font-medium text-white">{position.symbol}</span>
                   </div>
                 </td>
-                <td className="py-4 px-4">
-                  <span className={`px-2 py-1 rounded text-xs font-semibold ${
-                    position.side === 'LONG' 
-                      ? 'bg-green-500/20 text-green-400' 
-                      : 'bg-red-500/20 text-red-400'
-                  }`}>
-                    {position.side}
-                  </span>
+                {/* Side column removed */}
+                <td className="py-4 px-4 text-right text-blue-400 font-medium">
+                  {formatCurrencyFull(Math.abs(position.positionAmt * position.entryPrice))} 
                 </td>
                 <td className="py-4 px-4 text-right text-gray-300">
-                  {position.positionAmt}
+                  {formatCurrencyFull(position.entryPrice)}
                 </td>
                 <td className="py-4 px-4 text-right text-gray-300">
-                  {formatCurrency(position.entryPrice)}
-                </td>
-                <td className="py-4 px-4 text-right text-gray-300">
-                  {formatCurrency(position.markPrice)}
+                  {formatCurrencyFull(position.markPrice)}
                 </td>
                 <td className={`py-4 px-4 text-right font-medium ${getChangeColor(position.unrealizedProfit)}`}>
-                  <div>{formatCurrency(position.unrealizedProfit)}</div>
+                  <div>{formatCurrency(Math.abs(position.unrealizedProfit), 2)}</div>
                   <div className="text-xs opacity-80">
-                    {formatPercent(position.roe)}
+                    {formatPercent(position.roe, 2)}
                   </div>
                 </td>
                 <td className="py-4 px-4 text-right">
                   {position.stopLossPrice ? (
                     <div>
-                      <div className="text-yellow-400">{formatCurrency(position.stopLossPrice)}</div>
+                      <div className="text-yellow-400">{formatCurrencyFull(position.stopLossPrice)}</div>
                       <div className="text-xs text-red-400">
-                        {formatCurrency(position.stopLossValue)}
+                        {formatCurrencyFull(position.stopLossValue)}
                       </div>
                     </div>
                   ) : (
@@ -198,7 +195,7 @@ export default function FuturesPositions({ positions, onRefresh }) {
                   )}
                 </td>
                 <td className="py-4 px-4 text-right text-orange-400">
-                  {formatCurrency(position.liquidationPrice)}
+                  {formatCurrencyFull(position.liquidationPrice)}
                 </td>
                 <td className="py-4 px-4 text-center">
                   <span className={`px-2 py-1 rounded text-xs font-semibold ${

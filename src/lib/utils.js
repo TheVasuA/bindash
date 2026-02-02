@@ -1,4 +1,14 @@
+
 'use client';
+// Format currency with full precision (up to 8 decimals, no rounding)
+export function formatCurrencyFull(value) {
+  if (value === undefined || value === null) return '$0.00';
+  // Show up to 8 decimals, but trim trailing zeros
+  return '$' + Number(value).toLocaleString('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 8,
+  }).replace(/\.0+$/, '');
+}
 
 import { useState, useEffect, useCallback } from 'react';
 
