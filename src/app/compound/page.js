@@ -5,43 +5,14 @@ import { useFetch, formatCurrency } from '@/lib/utils';
 import Link from 'next/link';
 
 export default function CompoundPage() {
-  const { data: futuresData } = useFetch('/api/futures', { refreshInterval: 5000 });
+  const { data: futuresData, loading: futuresLoading } = useFetch('/api/futures', { refreshInterval: 5000 });
   const [completedTrades, setCompletedTrades] = useState([]);
   const [savedStartingBalance, setSavedStartingBalance] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isDbLoaded, setIsDbLoaded] = useState(false);
   const [targetAmount] = useState(100000); // $100,000 target
   const [profitPercent] = useState(2); // 2% per trade
 
-  const currentBalance = futuresData?.account?.walletBalance || 0;
-
-  // Load data from database
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        const res = await fetch('/api/compound');
-        const data = await res.json();
-        if (data.startingBalance) {
-          setSavedStartingBalance(data.startingBalance);
-        }
-        if (data.completedTrades) {
-          setCompletedTrades(data.completedTrades);
-        }
-      } catch (error) {
-        console.error('Failed to load compound data:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    loadData();
-  }, []);
-
-  // Save starting balance when first loading with futures data
-  useEffect(() => {
-    if (!isLoading && currentBalance > 0 && savedStartingBalance === null) {
-      setSavedStartingBalance(currentBalance);
-      saveToDatabase(currentBalance, []);
-    }
-  }, [currentBalance, savedStartingBalance, isLoading]);
+  const currentBalance = futuresData?.account?.totalWalletBalance || 0;
 
   // Save to database
   const saveToDatabase = useCallback(async (balance, trades) => {
@@ -58,6 +29,36 @@ export default function CompoundPage() {
       console.error('Failed to save compound data:', error);
     }
   }, []);
+
+  // Load data from database
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const res = await fetch('/api/compound');
+        const data = await res.json();
+        if (data.startingBalance && data.startingBalance > 0) {
+          setSavedStartingBalance(data.startingBalance);
+        }
+        if (data.completedTrades && data.completedTrades.length > 0) {
+          setCompletedTrades(data.completedTrades);
+        }
+      } catch (error) {
+        console.error('Failed to load compound data:', error);
+      } finally {
+        setIsDbLoaded(true);
+      }
+    };
+    loadData();
+  }, []);
+
+  // Save starting balance when futures data loads and no saved balance exists
+  useEffect(() => {
+    if (isDbLoaded && !futuresLoading && currentBalance > 0 && savedStartingBalance === null) {
+      console.log('Setting starting balance from futures:', currentBalance);
+      setSavedStartingBalance(currentBalance);
+      saveToDatabase(currentBalance, completedTrades);
+    }
+  }, [currentBalance, savedStartingBalance, isDbLoaded, futuresLoading, saveToDatabase, completedTrades]);
 
   // Starting balance from saved value or current futures balance
   const startingBalance = savedStartingBalance || currentBalance;
@@ -121,6 +122,15 @@ export default function CompoundPage() {
     }
   };
 
+  const setStartingBalanceNow = async () => {
+    if (currentBalance > 0) {
+      setSavedStartingBalance(currentBalance);
+      await saveToDatabase(currentBalance, completedTrades);
+    } else {
+      alert('Futures balance not loaded yet. Please wait and try again.');
+    }
+  };
+
   const currentMilestone = milestones[completedCount] || null;
 
   return (
@@ -152,11 +162,19 @@ export default function CompoundPage() {
             <p className="text-lg md:text-xl font-bold text-white">
               {formatCurrency(startingBalance)}
             </p>
+            {startingBalance === 0 && currentBalance > 0 && (
+              <button
+                onClick={setStartingBalanceNow}
+                className="mt-2 text-xs bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded"
+              >
+                Set to {formatCurrency(currentBalance)}
+              </button>
+            )}
           </div>
           <div className="bg-gray-800/50 rounded-xl p-4 border border-gray-700">
             <p className="text-gray-400 text-xs md:text-sm">Current Balance</p>
             <p className="text-lg md:text-xl font-bold text-blue-400">
-              {formatCurrency(currentBalance)}
+              {futuresLoading ? 'Loading...' : formatCurrency(currentBalance)}
             </p>
           </div>
           <div className="bg-gray-800/50 rounded-xl p-4 border border-gray-700">
