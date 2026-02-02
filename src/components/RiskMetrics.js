@@ -46,14 +46,14 @@ export default function RiskMetrics({ metrics }) {
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 md:gap-4">
       {metricCards.map((metric, index) => (
-        <div key={index} className="bg-gray-800/50 rounded-xl p-4 border border-gray-700">
-          <p className="text-gray-400 text-sm mb-1">{metric.label}</p>
-          <p className={`text-xl font-bold ${metric.isRisk ? getRiskColor(metric.value).split(' ')[0] : metric.color}`}>
+        <div key={index} className="bg-gray-800/50 rounded-xl p-3 md:p-4 border border-gray-700">
+          <p className="text-gray-400 text-xs md:text-sm mb-1">{metric.label}</p>
+          <p className={`text-lg md:text-xl font-bold ${metric.isRisk ? getRiskColor(metric.value).split(' ')[0] : metric.color}`}>
             {metric.value}
           </p>
-          <p className="text-gray-500 text-xs mt-1">{metric.description}</p>
+          <p className="text-gray-500 text-xs mt-1 hidden sm:block">{metric.description}</p>
         </div>
       ))}
     </div>

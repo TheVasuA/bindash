@@ -57,7 +57,7 @@ export default function AllocationChart({ holdings }) {
   };
 
   return (
-    <div className="h-80">
+    <div className="h-64 md:h-80">
       <ResponsiveContainer width="100%" height="100%">
         <PieChart>
           <Pie
@@ -66,7 +66,7 @@ export default function AllocationChart({ holdings }) {
             cy="50%"
             labelLine={false}
             label={renderCustomLabel}
-            outerRadius={100}
+            outerRadius={80}
             fill="#8884d8"
             dataKey="value"
           >
@@ -76,7 +76,7 @@ export default function AllocationChart({ holdings }) {
           </Pie>
           <Tooltip content={<CustomTooltip />} />
           <Legend
-            formatter={(value) => <span className="text-gray-300">{value}</span>}
+            formatter={(value) => <span className="text-gray-300 text-xs md:text-sm">{value}</span>}
           />
         </PieChart>
       </ResponsiveContainer>

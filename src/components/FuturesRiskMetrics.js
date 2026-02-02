@@ -90,11 +90,11 @@ export default function FuturesRiskMetrics({ metrics, account, positions }) {
   ];
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-4">
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-9 gap-3 md:gap-4">
       {metricCards.map((metric, index) => (
-        <div key={index} className="bg-gray-800/50 rounded-xl p-4 border border-gray-700">
+        <div key={index} className="bg-gray-800/50 rounded-xl p-3 md:p-4 border border-gray-700">
           <p className="text-gray-400 text-xs mb-1">{metric.label}</p>
-          <p className={`text-lg font-bold ${metric.isRisk ? getRiskColor(metric.value).split(' ')[0] : metric.color}`}>
+          <p className={`text-base md:text-lg font-bold ${metric.isRisk ? getRiskColor(metric.value).split(' ')[0] : metric.color}`}>
             {metric.value}
           </p>
           <p className="text-gray-500 text-xs mt-1 truncate">{metric.subValue}</p>
