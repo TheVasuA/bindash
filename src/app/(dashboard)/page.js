@@ -39,58 +39,59 @@ export default function FuturesPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 md:py-8">
-      {/* Balance Header Card */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-2xl border border-gray-700/50 shadow-2xl mb-6">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
-        <div className="absolute bottom-0 left-0 w-48 h-48 bg-purple-500/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
-        
-        <div className="relative p-4 md:p-6">
-          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-4">
-            <div>
-              <p className="text-gray-500 text-xs uppercase tracking-wider mb-1">Current Balance</p>
-              <p className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-white via-white to-gray-400 bg-clip-text text-transparent">
-                {formatCurrency(currentBalance, 2)}
-              </p>
-              {futuresAccount?.totalUnrealizedProfit !== undefined && (
-                <div className={`inline-flex items-center gap-1 mt-1 px-2 py-0.5 rounded-full text-xs font-medium ${
-                  futuresAccount.totalUnrealizedProfit >= 0 
-                    ? 'bg-green-500/20 text-green-400' 
-                    : 'bg-red-500/20 text-red-400'
-                }`}>
-                  {futuresAccount.totalUnrealizedProfit >= 0 ? '↑' : '↓'}
-                  {futuresAccount.totalUnrealizedProfit >= 0 ? '+' : ''}{formatCurrency(futuresAccount.totalUnrealizedProfit)} unrealized
-                </div>
-              )}
-            </div>
-            <div className="text-left md:text-right">
-              <p className="text-gray-500 text-xs uppercase tracking-wider mb-1">Goal Target</p>
-              <p className="text-2xl md:text-3xl font-bold text-transparent bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text">
-                $100,000
-              </p>
+      {/* Balance Header Card + Stats Cards Row - Sticky */}
+      <div className="sticky top-16 z-30 flex flex-col md:flex-row gap-4 mb-6 bg-gray-900/95 backdrop-blur-md rounded-2xl border border-gray-700/50">
+        {/* Balance Header Card - Sticky */}
+        <div className="sticky top-16 z-30 flex-1 min-w-0 relative overflow-hidden bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-2xl border border-gray-700/50 shadow-2xl">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+          <div className="absolute bottom-0 left-0 w-48 h-48 bg-purple-500/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
+          <div className="relative p-2 md:p-3">
+            <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-2 mb-2">
+              <div>
+                <p className="text-gray-500 text-xs uppercase tracking-wider mb-1">Current Balance</p>
+                <p className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-white via-white to-gray-400 bg-clip-text text-transparent">
+                  {formatCurrency(currentBalance, 2)}
+                </p>
+                {futuresAccount?.totalUnrealizedProfit !== undefined && (
+                  <div className={`inline-flex items-center gap-1 mt-1 px-2 py-0.5 rounded-full text-xs font-medium ${
+                    futuresAccount.totalUnrealizedProfit >= 0 
+                      ? 'bg-green-500/20 text-green-400' 
+                      : 'bg-red-500/20 text-red-400'
+                  }`}>
+                    {futuresAccount.totalUnrealizedProfit >= 0 ? '↑' : '↓'}
+                    {futuresAccount.totalUnrealizedProfit >= 0 ? '+' : ''}{formatCurrency(futuresAccount.totalUnrealizedProfit)} unrealized
+                  </div>
+                )}
+              </div>
+              <div className="text-left md:text-right">
+                <p className="text-gray-500 text-xs uppercase tracking-wider mb-1">Goal Target</p>
+                <p className="text-2xl md:text-3xl font-bold text-transparent bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text">
+                  $100,000
+                </p>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-
-      {/* Stats Cards */}
-      <div className="grid grid-cols-3 gap-2 md:gap-3 mb-6">
-        <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-3 md:p-4 border border-gray-700/50">
-          <p className="text-gray-500 text-xs mb-1">Wallet</p>
-          <p className="text-base md:text-xl font-bold text-white">
-            {formatCurrency(futuresAccount?.totalWalletBalance || 0)}
-          </p>
-        </div>
-        <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-3 md:p-4 border border-gray-700/50">
-          <p className="text-gray-500 text-xs mb-1">Margin</p>
-          <p className="text-base md:text-xl font-bold text-white">
-            {formatCurrency(futuresAccount?.availableBalance || 0)}
-          </p>
-        </div>
-        <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-3 md:p-4 border border-gray-700/50">
-          <p className="text-gray-500 text-xs mb-1">PnL</p>
-          <p className={`text-base md:text-xl font-bold ${(futuresAccount?.totalUnrealizedProfit || 0) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-            {(futuresAccount?.totalUnrealizedProfit || 0) >= 0 ? '+' : ''}{formatCurrency(futuresAccount?.totalUnrealizedProfit || 0)}
-          </p>
+        {/* Stats Cards */}
+        <div className="flex-1 min-w-0 grid grid-cols-3 gap-2 md:gap-3">
+          <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-2 md:p-3 border border-gray-700/50">
+            <p className="text-gray-500 text-xs mb-1">Wallet</p>
+            <p className="text-base md:text-xl font-bold text-white">
+              {formatCurrency(futuresAccount?.totalWalletBalance || 0)}
+            </p>
+          </div>
+          <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-2 md:p-3 border border-gray-700/50">
+            <p className="text-gray-500 text-xs mb-1">Margin</p>
+            <p className="text-base md:text-xl font-bold text-white">
+              {formatCurrency(futuresAccount?.availableBalance || 0)}
+            </p>
+          </div>
+          <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-2 md:p-3 border border-gray-700/50">
+            <p className="text-gray-500 text-xs mb-1">PnL</p>
+            <p className={`text-base md:text-xl font-bold ${(futuresAccount?.totalUnrealizedProfit || 0) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+              {(futuresAccount?.totalUnrealizedProfit || 0) >= 0 ? '+' : ''}{formatCurrency(futuresAccount?.totalUnrealizedProfit || 0)}
+            </p>
+          </div>
         </div>
       </div>
 
