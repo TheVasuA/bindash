@@ -3,6 +3,8 @@
 import { useState, useEffect, useRef } from 'react';
 
 const timeIntervals = [
+  { label: '1m', value: '1' },
+  { label: '3m', value: '3' },
   { label: '5m', value: '5' },
   { label: '15m', value: '15' },
   { label: '1H', value: '60' },
@@ -33,7 +35,9 @@ function AdvancedChart({ symbol, interval = '15' }) {
       locale: 'en',
       allow_symbol_change: false,
       hide_top_toolbar: true,
-      hide_legend: false,
+      hide_legend: true, // Hide the legend
+      hide_symbol_logo: true, // Hide the symbol logo/title
+      withdateranges: true, // Hide the symbol title bar
       save_image: false,
       calendar: false,
       studies: [
@@ -98,7 +102,7 @@ export default function PositionCharts({ positions = [] }) {
               <span className="text-xs text-gray-400">{currentLabel}</span>
             </div>
             <div className="h-[400px]">
-              <AdvancedChart symbol={symbol} interval={selectedInterval} />
+              <AdvancedChart symbol={`${symbol}.p`} interval={selectedInterval} />
             </div>
           </div>
         ))}
