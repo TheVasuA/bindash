@@ -168,6 +168,7 @@ export default function FuturesPositions({ positions, onRefresh }) {
               <th className="text-center py-3 px-4 text-gray-400 font-medium text-sm">Leverage</th>
               <th className="border-l border-gray-700 text-left py-3 px-4 text-gray-400 font-medium text-sm">Symbol</th>
               <th className=" text-right py-3 px-4 text-gray-400 font-medium text-sm">PnL</th>
+              <th className=" text-right py-3 px-4 text-gray-400 font-medium text-sm">PnL (INR)</th>
               <th className=" text-right py-3 px-4 text-gray-400 font-medium text-sm">USDT</th>
               <th className="text-center py-3 px-2 text-gray-400 font-medium text-sm"></th>
             </tr>
@@ -231,6 +232,12 @@ export default function FuturesPositions({ positions, onRefresh }) {
                   <div className="text-sm opacity-40">
                     {Number(position.roe).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%
                   </div>
+                </td>
+                <td className={`border-l border-gray-700 py-4 px-4 text-right font-bold font-mono ${Number(position.unrealizedProfit) >= 0 ? 'text-green-400' : 'text-red-400'}`}> 
+                  {(() => {
+                    const inr = Math.abs(Number(position.unrealizedProfit) * 90);
+                    return inr.toLocaleString('en-IN', { maximumFractionDigits: 0 });
+                  })()}
                 </td>
                 <td className="border-l border-gray-700 py-4 px-4 text-right text-orange-200 ">
                   {(() => {
