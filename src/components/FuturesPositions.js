@@ -220,26 +220,26 @@ export default function FuturesPositions({ positions, onRefresh }) {
                     {position.leverage}x
                   </span>
                 </td>
-                <td className="border-l border-gray-700 py-4 px-4">
-                  <div className="flex items-center gap-2">
+                <td className="border-l border-gray-700 py-4 px-4 text-shadow-lg/30">
+                  <div className="flex items-center gap-2 ">
                     <div className={`w-2 h-2 rounded-full ${position.side === 'LONG' ? 'bg-green-500' : 'bg-red-500'}`} />
-                    <span className="font-medium text-yellow-400">{position.symbol}</span>
+                    <span className="font-medium text-yellow-400">{position.symbol.replace(/USDT$/, '')}</span>
                   </div>
                 </td>
-                <td className={`border-l border-gray-700 py-4 px-4 text-right font-medium ${getChangeColor(position.unrealizedProfit)}`}> 
+                <td className={`border-l border-gray-700 py-4 px-4 text-right font-bold font-medium font-mono text-shadow-2xs text-shadow-gray-600 ${getChangeColor(position.unrealizedProfit)}`}> 
                   <div>{Number(Math.abs(position.unrealizedProfit)).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
-                  <div className="text-sm opacity-80">
+                  <div className="text-sm opacity-40">
                     {Number(position.roe).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%
                   </div>
                 </td>
-                <td className="border-l border-gray-700 py-4 px-4 text-right text-gray-200 font-medium">
+                <td className="border-l border-gray-700 py-4 px-4 text-right text-orange-200 ">
                   {Math.round(Math.abs(position.positionAmt * position.entryPrice))}
                 </td>
                 <td className="py-4 px-2 text-center">
                   <button
                     onClick={() => handleForceClose(position)}
                     disabled={closing === position.symbol}
-                    className="p-1.5 bg-red-600 hover:bg-red-700 disabled:bg-gray-600 text-white rounded transition-colors"
+                    className="p-0.4 bg-gray-200 hover:bg-gray-300 disabled:bg-gray-400 text-blue-800 rounded transition-colors border border-gray-400"
                     title="Force Close"
                   >
                     {closing === position.symbol ? (

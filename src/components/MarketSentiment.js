@@ -47,6 +47,7 @@ export default function MarketSentiment({ symbol = 'BTCUSDT' }) {
       <h2 className="text-lg md:text-xl font-semibold text-white mb-3 md:mb-4">
         Market Sentiment - {symbol}
       </h2>
+      
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {timeframes.map((tf) => (
           <div 
@@ -60,36 +61,6 @@ export default function MarketSentiment({ symbol = 'BTCUSDT' }) {
           </div>
         ))}
       </div>
-
-      {/* TradingView Top Stories Widget */}
-      <div className="mt-8">
-        <TradingViewTopStories />
-      </div>
     </section>
   );
-
-}
-
-function TradingViewTopStories() {
-  const containerRef = useRef(null);
-
-  useEffect(() => {
-    if (!containerRef.current) return;
-    containerRef.current.innerHTML = '';
-    const script = document.createElement('script');
-    script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-timeline.js';
-    script.async = true;
-    script.innerHTML = JSON.stringify({
-      feedMode: 'market',
-      market: 'crypto',
-      colorTheme: 'dark',
-      isTransparent: true,
-      width: '100%',
-      height: 500,
-      locale: 'en',
-    });
-    containerRef.current.appendChild(script);
-  }, []);
-
-  return <div ref={containerRef} className="h-[500px] overflow-hidden" />;
 }

@@ -48,7 +48,7 @@ export default function PortfolioHeader({ totalValue, futuresAccount, lastUpdate
   const tradesProgress = totalTrades > 0 ? (completedTrades / totalTrades) * 100 : 0;
 
   return (
-    <div className="flex flex-col gap-4 mb-6 md:mb-8">
+    <div className="flex flex-col gap-2 mb-6 md:mb-8">
       {/* Glass Header Card */}
       <div className="relative overflow-hidden bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-2xl border border-gray-700/50 shadow-2xl">
         {/* Background Glow Effects */}
