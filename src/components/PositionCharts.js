@@ -12,7 +12,7 @@ const timeIntervals = [
   { label: '1D', value: 'D' },
 ];
 
-function AdvancedChart({ symbol, interval = '15' }) {
+function AdvancedChart({ symbol, interval = '240' }) {
   const containerRef = useRef(null);
 
   useEffect(() => {
@@ -43,6 +43,7 @@ function AdvancedChart({ symbol, interval = '15' }) {
       studies: [
         'MACD@tv-basicstudies',
         'Stochastic@tv-basicstudies',
+        'BB@tv-basicstudies', // Add Bollinger Bands
       ],
       support_host: 'https://www.tradingview.com',
     });

@@ -223,7 +223,7 @@ export default function FuturesPositions({ positions, onRefresh }) {
                 <td className="border-l border-gray-700 py-4 px-4">
                   <div className="flex items-center gap-2">
                     <div className={`w-2 h-2 rounded-full ${position.side === 'LONG' ? 'bg-green-500' : 'bg-red-500'}`} />
-                    <span className="font-medium text-white">{position.symbol}</span>
+                    <span className="font-medium text-yellow-400">{position.symbol}</span>
                   </div>
                 </td>
                 <td className={`border-l border-gray-700 py-4 px-4 text-right font-medium ${getChangeColor(position.unrealizedProfit)}`}> 

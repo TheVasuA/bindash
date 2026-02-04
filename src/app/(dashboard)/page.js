@@ -38,7 +38,7 @@ export default function FuturesPage() {
   const currentBalance = (futuresAccount?.totalWalletBalance || 0) + (futuresAccount?.totalUnrealizedProfit || 0);
 
   return (
-    <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 md:py-8">
+    <div className="max-w-full xl:max-w-screen-2xl mx-auto px-2 sm:px-6 lg:px-12 py-4 md:py-8 flex flex-col">
       {/* Balance Header Card + Stats Cards Row - Sticky */}
       <div className="sticky top-16 z-30 flex flex-col md:flex-row gap-4 mb-6 bg-gray-900/95 backdrop-blur-md rounded-2xl border border-gray-700/50">
         {/* Balance Header Card - Sticky */}
