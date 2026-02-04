@@ -223,7 +223,7 @@ export default function FuturesPositions({ positions, onRefresh }) {
                 <td className="border-l border-gray-700 py-4 px-4 text-shadow-lg/30">
                   <div className="flex items-center gap-2 ">
                     <div className={`w-2 h-2 rounded-full ${position.side === 'LONG' ? 'bg-green-500' : 'bg-red-500'}`} />
-                    <span className="font-medium text-yellow-400">{position.symbol.replace(/USDT$/, '')}</span>
+                    <span className="font-medium text-yellow-400 text-lg">{position.symbol.replace(/USDT$/, '')}</span>
                   </div>
                 </td>
                 <td className={`border-l border-gray-700 py-4 px-4 text-right font-bold font-medium font-mono text-shadow-2xs text-shadow-gray-600 ${getChangeColor(position.unrealizedProfit)}`}> 
@@ -233,7 +233,13 @@ export default function FuturesPositions({ positions, onRefresh }) {
                   </div>
                 </td>
                 <td className="border-l border-gray-700 py-4 px-4 text-right text-orange-200 ">
-                  {Math.round(Math.abs(position.positionAmt * position.entryPrice))}
+                  {(() => {
+                    const value = Math.round(Math.abs(position.positionAmt * position.entryPrice));
+                    if (value >= 1000) {
+                      return (value / 1000).toFixed(value % 1000 === 0 ? 0 : 1) + 'k';
+                    }
+                    return value;
+                  })()}
                 </td>
                 <td className="py-4 px-2 text-center">
                   <button
