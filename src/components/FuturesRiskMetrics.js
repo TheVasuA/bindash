@@ -1,8 +1,9 @@
-'use client';
-
 import { formatCurrency, formatPercent } from '@/lib/utils';
-
 export default function FuturesRiskMetrics({ metrics, account, positions }) {
+  // Target value for achievement
+  const TARGET_VALUE = 100000;
+  const targetAchieved = (account?.totalWalletBalance || 0) >= TARGET_VALUE;
+  const finalValue = account?.totalWalletBalance || 0;
   if (!metrics) {
     return (
       <div className="flex items-center justify-center h-32 text-gray-500">
@@ -33,6 +34,13 @@ export default function FuturesRiskMetrics({ metrics, account, positions }) {
   };
 
   const metricCards = [
+    // Target achievement card
+    ...(targetAchieved ? [{
+      label: '🎯 Target Achieved',
+      value: formatCurrency(Math.round(finalValue), 0),
+      subValue: `Final Value`,
+      color: 'text-green-500',
+    }] : []),
     {
       label: 'Unrealized PnL',
       value: formatCurrency(Math.round(parseFloat(metrics.totalPnL)), 0),

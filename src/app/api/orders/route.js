@@ -14,7 +14,7 @@ export async function GET(request) {
     }
 
     let data;
-    if (type === 'open') {
+    if (type === 'open' || type === 'pending') {
       data = await getOpenOrders(symbol);
     } else {
       data = await getRecentTrades(symbol || 'BTCUSDT');

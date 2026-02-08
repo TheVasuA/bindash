@@ -1,9 +1,11 @@
+
 'use client';
 
 import { useState } from 'react';
 import { formatCurrency, formatCurrencyFull, formatPercent, getChangeColor } from '@/lib/utils';
 
-export default function FuturesPositions({ positions, onRefresh }) {
+// Accept pendingOrders prop
+export default function FuturesPositions({ positions, onRefresh, pendingOrders = [] }) {
   const [closing, setClosing] = useState(null);
 
   const handleForceClose = async (position) => {
@@ -38,13 +40,84 @@ export default function FuturesPositions({ positions, onRefresh }) {
     }
   };
 
-  if (!positions || positions.length === 0) {
+  if ((!positions || positions.length === 0) && (!pendingOrders || pendingOrders.length === 0)) {
     return (
       <div className="flex items-center justify-center h-32 text-gray-500">
-        No open futures positions
+        No open futures positions or pending limit orders
       </div>
     );
   }
+      {/* Pending Limit Orders - Mobile Card View */}
+      {pendingOrders.length > 0 && (
+        <div className="block md:hidden space-y-4 mt-6">
+          {pendingOrders.map((order, idx) => (
+            <div key={`pending-mobile-${order.orderId || idx}`} className="bg-gray-900 rounded-lg p-4 border border-yellow-700">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-2 h-2 rounded-full bg-yellow-400" />
+                <span className="font-medium text-yellow-300 text-lg">{order.symbol}</span>
+                <span className="px-2 py-0.5 rounded text-xs font-semibold bg-yellow-500/20 text-yellow-400">Pending</span>
+                <span className="px-2 py-0.5 rounded text-xs font-semibold bg-blue-500/20 text-blue-400">Limit</span>
+              </div>
+              <div className="grid grid-cols-2 gap-3 text-sm">
+                <div>
+                  <span className="text-gray-400">Side</span>
+                  <p className="text-white">{order.side}</p>
+                </div>
+                <div>
+                  <span className="text-gray-400">Price</span>
+                  <p className="text-white">{formatCurrency(order.price)}</p>
+                </div>
+                <div>
+                  <span className="text-gray-400">Quantity</span>
+                  <p className="text-white">{order.origQty}</p>
+                </div>
+                <div>
+                  <span className="text-gray-400">Status</span>
+                  <p className="text-white">{order.status}</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+            {/* Pending Limit Orders - Desktop Table View */}
+            {pendingOrders.length > 0 && (
+              <tr className="bg-yellow-900">
+                <td colSpan="11" className="py-2 px-4 text-yellow-300 font-bold text-left border-t border-yellow-700">
+                  Pending Limit Orders
+                </td>
+              </tr>
+            )}
+            {pendingOrders.length > 0 && pendingOrders.map((order, idx) => (
+              <tr key={`pending-desktop-${order.orderId || idx}`} className="border-b border-yellow-700 bg-yellow-900/30">
+                <td className="py-4 px-4 text-right text-yellow-200">-</td>
+                <td className="py-4 px-4 text-right text-yellow-200">-</td>
+                <td className="py-4 px-4 text-right text-yellow-200">-</td>
+                <td className="py-4 px-4 text-right text-yellow-200">-</td>
+                <td className="py-4 px-4 text-right text-yellow-200">-</td>
+                <td className="py-4 px-4 text-center">
+                  <span className="px-2 py-1 rounded text-xs font-semibold bg-blue-500/20 text-blue-400">Limit</span>
+                </td>
+                <td className="border-l border-yellow-700 py-4 px-4 text-shadow-lg/30">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-yellow-400" />
+                    <span className="font-medium text-yellow-300 text-lg">{order.symbol.replace(/USDT$/, '')}</span>
+                  </div>
+                </td>
+                <td className="border-l border-yellow-700 py-4 px-4 text-right font-bold font-medium font-mono text-shadow-2xs text-shadow-gray-600 text-yellow-300">
+                  <div>{order.side}</div>
+                </td>
+                <td className="border-l border-yellow-700 py-4 px-4 text-right font-bold font-mono text-yellow-300">
+                  {order.status}
+                </td>
+                <td className="border-l border-yellow-700 py-4 px-4 text-right text-yellow-200">
+                  {formatCurrency(order.price)}
+                </td>
+                <td className="py-4 px-2 text-center">
+                  <span className="px-2 py-1 rounded text-xs font-semibold bg-yellow-500/20 text-yellow-400">Pending</span>
+                </td>
+              </tr>
+            ))}
 
   // Sort positions by total USDT size (desc)
   const sortedPositions = [...positions].sort((a, b) => {
@@ -235,7 +308,7 @@ export default function FuturesPositions({ positions, onRefresh }) {
                 </td>
                 <td className={`border-l border-gray-700 py-4 px-4 text-right font-bold font-mono ${Number(position.unrealizedProfit) >= 0 ? 'text-green-400' : 'text-red-400'}`}> 
                   {(() => {
-                    const inr = Math.abs(Number(position.unrealizedProfit) * 90);
+                    const inr = Math.abs(Number(position.unrealizedProfit) * 97);
                     return inr.toLocaleString('en-IN', { maximumFractionDigits: 0 });
                   })()}
                 </td>
@@ -272,6 +345,37 @@ export default function FuturesPositions({ positions, onRefresh }) {
           </tbody>
         </table>
       </div>
+      {/* Open Entry Orders - Desktop Table View */}
+      {pendingOrders && pendingOrders.length > 0 && pendingOrders.filter(order => order.type?.toUpperCase() === 'LIMIT').length > 0 && (
+        <div className="hidden md:block overflow-x-auto mt-2">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b border-blue-700">
+                <th className="text-left py-3 px-4 text-blue-400 font-medium text-sm">Symbol</th>
+                <th className="text-left py-3 px-4 text-blue-400 font-medium text-sm">Position Value</th>
+                <th className="text-left py-3 px-4 text-blue-400 font-medium text-sm">Entry Price</th>
+                <th className="text-left py-3 px-4 text-blue-400 font-medium text-sm">Force Close</th>
+              </tr>
+            </thead>
+            <tbody>
+              {pendingOrders.filter(order => order.type?.toUpperCase() === 'LIMIT').map((order, idx) => (
+                <tr key={`open-entry-${order.orderId || idx}`} className="border-b border-blue-700 bg-blue-900/30">
+                  <td className="py-3 px-4 text-blue-200">{order.symbol}</td>
+                  <td className="py-3 px-4 text-blue-200">{(order.amount * order.price).toLocaleString('en-US', { maximumFractionDigits: 8 })}</td>
+                  <td className="py-3 px-4 text-blue-200">{order.price}</td>
+                  <td className="py-3 px-4 text-blue-200">
+                    <button
+                      className="bg-red-400 hover:bg-red-600 text-white rounded px-2 py-1 text-xs"
+                      onClick={() => handleForceClose(order)}
+                    >X</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+      
     </>
   );
 }

@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -19,6 +20,14 @@ export default function FuturesPage() {
     refetch: refetchFutures,
     apiWeight
   } = useFetch('/api/futures?type=positions', { refreshInterval: REFRESH_INTERVAL });
+
+  // Fetch pending limit orders (now inside function)
+  const {
+    data: pendingOrdersData,
+    loading: pendingOrdersLoading,
+    error: pendingOrdersError,
+    refetch: refetchPendingOrders
+  } = useFetch('/api/futures?type=orders', { refreshInterval: REFRESH_INTERVAL });
 
   useEffect(() => {
     if (futuresError) {
@@ -135,7 +144,11 @@ export default function FuturesPage() {
             <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
           </div>
         ) : (
-          <FuturesPositions positions={futuresPositions} onRefresh={refetchFutures} />
+          <FuturesPositions 
+            positions={futuresPositions} 
+            onRefresh={refetchFutures} 
+            pendingOrders={pendingOrdersData || []}
+          />
         )}
       </section>
 
@@ -145,7 +158,7 @@ export default function FuturesPage() {
       )}
 
       {/* Market Sentiment */}
-      <MarketSentiment symbol="BTCUSDT" />
+      {/* <MarketSentiment symbol="BTCUSDT" /> */}
 
       {/* Error Card */}
       {displayError && (
