@@ -211,13 +211,23 @@ export default function FuturesPositions({ positions, onRefresh, pendingOrders =
               <div>
                 <span className="text-gray-400">Stop Loss</span>
                 {position.stopLossPrice ? (
-                  <p className="text-yellow-400">
-                    {formatCurrencyFull(position.stopLossPrice)}
-                    <span className="text-red-400 text-xs ml-1">({formatCurrencyFull(position.stopLossValue)})</span>
-                  </p>
-                ) : (
-                  <p className="text-gray-500">No SL</p>
-                )}
+                    <p className={
+                      position.stopLossPrice > position.entryPrice
+                        ? "text-green-400"
+                        : "text-yellow-400"
+                    }>
+                      {formatCurrencyFull(position.stopLossPrice)}
+                      <span className={
+                        position.stopLossPrice > position.entryPrice
+                          ? "text-green-400 text-xs ml-1"
+                          : "text-red-400 text-xs ml-1"
+                      }>
+                        ({formatCurrencyFull(position.stopLossValue)})
+                      </span>
+                    </p>
+                  ) : (
+                    <p className="text-gray-500">No SL</p>
+                  )}
               </div>
               <div>
                 <span className="text-gray-400">Liq. Price</span>
@@ -272,15 +282,22 @@ export default function FuturesPositions({ positions, onRefresh, pendingOrders =
                 </td>
                 <td className="py-4 px-4 text-right">
                   {position.stopLossPrice ? (
-                    <div>
-                      <div className="text-gray-300">{formatCurrency(position.stopLossPrice, 4).replace('$', '')}</div>
-                      <div className="text-sm text-red-500">
-                        {formatCurrency(position.stopLossValue, 4).replace('$', '')}
+                      <div>
+                        <div className={ "text-gray-300"
+                        }>
+                          {formatCurrency(position.stopLossPrice, 4).replace('$', '')}
+                        </div>
+                        <div className={
+                          position.stopLossPrice > position.entryPrice
+                            ? "text-green-400 text-sm"
+                            : "text-red-500 text-sm"
+                        }>
+                          {formatCurrency(position.stopLossValue, 4).replace('$', '')}
+                        </div>
                       </div>
-                    </div>
-                  ) : (
-                    <span className="text-gray-500 text-sm">No SL</span>
-                  )}
+                    ) : (
+                      <span className="text-gray-500 text-sm">No SL</span>
+                    )}
                 </td>
                 <td className="py-4 px-4 text-right text-blue-400">
                   {formatCurrency(position.liquidationPrice, 4).replace('$', '')}
