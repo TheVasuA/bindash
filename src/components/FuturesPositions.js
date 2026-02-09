@@ -271,9 +271,9 @@ export default function FuturesPositions({ positions, onRefresh, pendingOrders =
                 <td className="py-4 px-4 text-right">
                   {position.takeProfitPrice ? (
                     <div>
-                      <div className="text-gray-300">{formatCurrency(position.takeProfitPrice, 4).replace('$', '')}</div>
-                      <div className="text-sm text-green-500">
-                        {formatCurrency(position.takeProfitValue, 4).replace('$', '')}
+                      <div className="text-gray-300 text-xs">{formatCurrency(position.takeProfitPrice, 4).replace('$', '')}</div>
+                      <div className=" text-green-500 font-medium text-md ">
+                        {formatCurrency(position.takeProfitValue, 0).replace('$', '')}
                       </div>
                     </div>
                   ) : (
@@ -283,16 +283,16 @@ export default function FuturesPositions({ positions, onRefresh, pendingOrders =
                 <td className="py-4 px-4 text-right">
                   {position.stopLossPrice ? (
                       <div>
-                        <div className={ "text-gray-300"
+                        <div className={ "text-gray-300 text-xs"
                         }>
                           {formatCurrency(position.stopLossPrice, 4).replace('$', '')}
                         </div>
                         <div className={
                           position.stopLossPrice > position.entryPrice
-                            ? "text-green-400 text-sm"
-                            : "text-red-500 text-sm"
+                            ? "text-green-400 text-md font-medium"
+                            : "text-red-500 text-md font-medium"
                         }>
-                          {formatCurrency(position.stopLossValue, 4).replace('$', '')}
+                          {formatCurrency(position.stopLossValue, 0).replace('$', '')}
                         </div>
                       </div>
                     ) : (
@@ -317,13 +317,13 @@ export default function FuturesPositions({ positions, onRefresh, pendingOrders =
                     <span className="font-medium text-yellow-400 text-lg">{position.symbol.replace(/USDT$/, '')}</span>
                   </div>
                 </td>
-                <td className={`border-l border-gray-700 py-4 px-4 text-right font-bold font-medium font-mono text-shadow-2xs text-shadow-gray-600 ${getChangeColor(position.unrealizedProfit)}`}> 
+                <td className={`text-lg border-l border-gray-700 py-4 px-4 text-right font-bold font-medium font-mono text-shadow-2xs text-shadow-gray-600 ${getChangeColor(position.unrealizedProfit)}`}> 
                   <div>{Number(Math.abs(position.unrealizedProfit)).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
                   <div className="text-sm opacity-40">
                     {Number(position.roe).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%
                   </div>
                 </td>
-                <td className={`border-l border-gray-700 py-4 px-4 text-right font-bold font-mono ${Number(position.unrealizedProfit) >= 0 ? 'text-green-400' : 'text-red-400'}`}> 
+                <td className={`border-l border-gray-700 py-4 px-4 text-right font-bold font-mono text-lg ${Number(position.unrealizedProfit) >= 0 ? 'text-green-400' : 'text-red-400'}`}> 
                   {(() => {
                     const inr = Math.abs(Number(position.unrealizedProfit) * 97);
                     return inr.toLocaleString('en-IN', { maximumFractionDigits: 0 });
