@@ -35,11 +35,18 @@ function AdvancedChart({ symbol, interval = '240' }) {
       locale: 'en',
       allow_symbol_change: false,
       hide_top_toolbar: true,
-      hide_legend: true, // Hide the legend
-      hide_symbol_logo: true, // Hide the symbol logo/title
-      withdateranges: true, // Hide the symbol title bar
+      hide_legend: true,
+      hide_symbol_logo: true,
+      withdateranges: true,
       save_image: false,
       calendar: false,
+      hide_volume: true,
+      overrides: {
+        'paneProperties.vertGridProperties.color': 'rgba(0,0,0,0)',
+        'paneProperties.horzGridProperties.color': 'rgba(0,0,0,0)',
+        'paneProperties.vertGridProperties.style': 0,
+        'paneProperties.horzGridProperties.style': 0,
+      },
       studies: [
         'MACD@tv-basicstudies',
         'Stochastic@tv-basicstudies',
@@ -57,7 +64,7 @@ function AdvancedChart({ symbol, interval = '240' }) {
 }
 
 export default function PositionCharts({ positions = [] }) {
-  const [selectedInterval, setSelectedInterval] = useState('15');
+  const [selectedInterval, setSelectedInterval] = useState('60');
 
   if (!positions || positions.length === 0) {
     return null;
