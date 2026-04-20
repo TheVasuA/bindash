@@ -160,23 +160,21 @@ export default function FuturesPage() {
       {/* Market Sentiment */}
       {/* <MarketSentiment symbol="BTCUSDT" /> */}
 
-      {/* Error Card */}
+      {/* Error Card - fixed to left side */}
       {displayError && (
-        <div className="fixed bottom-4 left-4 right-4 md:left-auto md:right-4 md:max-w-md z-50">
-          <div className="bg-gray-800 border border-red-500/50 rounded-xl shadow-2xl p-4">
+        <div className="fixed bottom-4 left-4 z-50 max-w-xs w-[calc(100vw-2rem)] md:w-80">
+          <div className="bg-gray-900 border border-red-500/60 rounded-xl shadow-2xl p-4">
             <div className="flex items-start gap-3">
-              <span className="text-red-400 text-xl">⚠️</span>
-              <div className="flex-1">
-                <h4 className="text-red-400 font-medium text-sm mb-1">API Error</h4>
-                <p className="text-gray-300 text-xs">{displayError}</p>
+              <span className="text-red-400 text-lg mt-0.5">⚠️</span>
+              <div className="flex-1 min-w-0">
+                <h4 className="text-red-400 font-semibold text-sm mb-1">API Rate Limit</h4>
+                <p className="text-gray-300 text-xs break-words leading-relaxed">{displayError}</p>
               </div>
+              <button onClick={() => setDisplayError(null)} className="text-gray-500 hover:text-gray-300 text-lg leading-none ml-1">×</button>
             </div>
-            <div className="mt-3 flex gap-2">
-              <button onClick={refetchFutures} className="flex-1 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg text-sm font-medium">
+            <div className="mt-3">
+              <button onClick={refetchFutures} className="w-full py-1.5 bg-red-600/80 hover:bg-red-500 text-white rounded-lg text-xs font-medium">
                 Retry
-              </button>
-              <button onClick={() => setDisplayError(null)} className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded-lg text-sm font-medium">
-                Dismiss
               </button>
             </div>
           </div>

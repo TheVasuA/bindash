@@ -222,7 +222,7 @@ export default function FuturesPositions({ positions, onRefresh, pendingOrders =
                           ? "text-green-400 text-xs ml-1"
                           : "text-red-400 text-xs ml-1"
                       }>
-                        ({formatCurrencyFull(position.stopLossValue)})
+                        ({formatCurrencyFull(Math.abs(position.stopLossValue))})
                       </span>
                     </p>
                   ) : (
@@ -296,7 +296,7 @@ export default function FuturesPositions({ positions, onRefresh, pendingOrders =
                                 ? "text-green-400 text-md font-medium"
                                 : "text-red-500 text-md font-medium")
                         }>
-                          {formatCurrency(position.stopLossValue, 0).replace('$', '')}
+                          {formatCurrency(Math.abs(position.stopLossValue), 0).replace('$', '')}
                         </div>
                       </div>
                     ) : (
@@ -403,3 +403,4 @@ export default function FuturesPositions({ positions, onRefresh, pendingOrders =
     </>
   );
 }
+/// Desktop Table View for Open Entry Orders (Pending Limit Orders)

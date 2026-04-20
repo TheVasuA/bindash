@@ -21,16 +21,20 @@ export async function GET(request) {
 
     let data;
     
-    if (type === 'account') {
+    if (type === 'debug_orders') {
+      // Temporary debug: see raw open orders from Binance
+      data = await getFuturesOpenOrders();
+    } else if (type === 'account') {
       data = await getFuturesAccount();
     } else if (type === 'orders') {
       const symbol = searchParams.get('symbol');
       data = await getFuturesOpenOrders(symbol);
     } else {
       // Default: get positions with account info
-      const [account, positions] = await Promise.all([
+      const [account, positions, rawOpenOrders] = await Promise.all([
         getFuturesAccount(),
-        getFuturesPositions()
+        getFuturesPositions(),
+        getFuturesOpenOrders()
       ]);
       const riskMetrics = calculateFuturesRiskMetrics(positions, account);
       
@@ -38,6 +42,7 @@ export async function GET(request) {
         account,
         positions,
         riskMetrics,
+        _debug_openOrders: rawOpenOrders,
       };
     }
 

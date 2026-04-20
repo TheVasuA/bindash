@@ -367,6 +367,7 @@ export async function getFuturesAccount() {
       totalUnrealizedProfit: parseFloat(account.totalUnrealizedProfit),
       totalMarginBalance: parseFloat(account.totalMarginBalance),
       availableBalance: parseFloat(account.availableBalance),
+      totalMaintMargin: parseFloat(account.totalMaintMargin),
       totalPositionInitialMargin: parseFloat(account.totalPositionInitialMargin),
       assets: account.assets
         .filter(a => parseFloat(a.walletBalance) > 0)
@@ -392,6 +393,11 @@ export async function getFuturesPositions() {
       futuresAuthenticatedRequest('/fapi/v1/openOrders')
     ]);
     
+    // Debug: log all open order types to diagnose SL/TP detection
+    console.log('[FuturesPositions] openOrders raw:', JSON.stringify(openOrders.map(o => ({
+      symbol: o.symbol, type: o.type, side: o.side, stopPrice: o.stopPrice, price: o.price, positionSide: o.positionSide
+    }))));
+
     // Group stop loss and take profit orders by symbol
     const stopLossOrders = {};
     const takeProfitOrders = {};
