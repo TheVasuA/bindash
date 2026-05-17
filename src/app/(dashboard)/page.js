@@ -8,9 +8,11 @@ import FuturesPositions from '@/components/FuturesPositions';
 import FuturesRiskMetrics from '@/components/FuturesRiskMetrics';
 import MarketSentiment from '@/components/MarketSentiment';
 import PositionCharts from '@/components/PositionCharts';
+import GoalModal from '@/components/GoalModal';
 
 export default function FuturesPage() {
   const [displayError, setDisplayError] = useState(null);
+  const [goalModalOpen, setGoalModalOpen] = useState(true);
   const REFRESH_INTERVAL = 3000;
 
   const {
@@ -74,9 +76,12 @@ export default function FuturesPage() {
               </div>
               <div className="text-left md:text-right">
                 <p className="text-gray-500 text-xs uppercase tracking-wider mb-1">Goal Target</p>
-                <p className="text-2xl md:text-3xl font-bold text-transparent bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text">
+                <button
+                  onClick={() => setGoalModalOpen(true)}
+                  className="text-2xl md:text-3xl font-bold text-transparent bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text hover:from-green-300 hover:to-emerald-300 transition-all cursor-pointer"
+                >
                   $100,000
-                </p>
+                </button>
               </div>
             </div>
           </div>
@@ -180,6 +185,13 @@ export default function FuturesPage() {
           </div>
         </div>
       )}
+
+      {/* Goal Modal */}
+      <GoalModal
+        isOpen={goalModalOpen}
+        onClose={() => setGoalModalOpen(false)}
+        futuresAccount={futuresAccount}
+      />
 
       <footer className="text-center text-gray-500 text-xs md:text-sm py-4">
         <p>Bala</p>
